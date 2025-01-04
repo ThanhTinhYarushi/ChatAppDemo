@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
 const messageSchema = mongoose.Schema({
+    //* ID của cuộc hội thoại mà tin nhắn thuộc về.
     conversationId: {
-        //ID của cuộc hội thoại mà tin nhắn thuộc về.
         type: String,
     },
+    //* ID của người gửi tin nhắn.
     senderId: {
-        // ID của người gửi tin nhắn.
         type: String,
     },
+    //* Nội dung tin nhắn.
     message: {
-        //Nội dung tin nhắn.
         type: String,
     },
 });

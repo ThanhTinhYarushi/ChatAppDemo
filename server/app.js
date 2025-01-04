@@ -81,11 +81,10 @@ io.on("connection", (socket) => {
     // io.emit("getUsers", socket.userId);
 });
 
-// app.use(cors());
-
 // TODO: Routes
 app.get("/", (req, res) => {
-    res.send("Welcome");
+    res.send("Hello, đây là backend");
+    // res.write("Hello, đây là backend");
     // res.end();
 });
 
@@ -102,13 +101,13 @@ app.post("/api/register", async (req, res, next) => {
                 res.status(400).send("Người dùng đã tồn tại");
             } else {
                 const newUser = new Users({ fullName, email });
-                // TODO: password hashed khucs nay ne
+                // TODO: password hashed khuc nay ne
                 bcryptjs.hash(password, 10, (err, hashedPassword) => {
                     newUser.set("password", hashedPassword);
                     newUser.save();
                     next();
                 });
-                // FIXME:
+                // ? EXPLAIN: Dùng hàm này để băm mật khẩu với độ khó là 10
 
                 return res
                     .status(200)
@@ -126,18 +125,23 @@ app.post("/api/login", async (req, res, next) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            res.status(400).send("Please fill all required fields");
+            res.status(400).send("Vui lòng nhập đầy đủ thông tin!");
         } else {
             const user = await Users.findOne({ email });
             if (!user) {
-                res.status(400).send("User email or password is incorrect");
+                res.status(400).send(
+                    "Mật Khẩu hoặc email nguời dùng không đúng!"
+                );
             } else {
+                // dùng bcryptjs
                 const validateUser = await bcryptjs.compare(
                     password,
                     user.password
                 );
                 if (!validateUser) {
-                    res.status(400).send("User email or password is incorrect");
+                    res.status(400).send(
+                        "Mật Khẩu hoặc email nguời dùng không đúng!"
+                    );
                 } else {
                     const payload = {
                         userId: user._id,

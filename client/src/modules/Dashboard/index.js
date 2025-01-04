@@ -3,11 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Img1 from "../../assets/img1.jpg";
 import Img5 from "../../assets/img5.jpg";
-import Img6 from "../../assets/img6.jpg";
+// import Img6 from "../../assets/img6.jpg";
 import admin_avatar from "../../assets/TheLiems.png";
 import { io } from "socket.io-client";
 
 const Dashboard = () => {
+    // * khai báo
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("user:detail"))
     );
@@ -21,11 +22,13 @@ const Dashboard = () => {
     console.log("conversations :>>", conversations);
     console.log("messages :>>", messages);
     console.log("users :>>", users);
+    console.log(setUser);
 
+    // * hàm useeffect: setSocket port 8000
     useEffect(() => {
         setSocket(io("http://localhost:8080"));
     }, []);
-
+    // * hàm useeffect: socket
     useEffect(() => {
         socket?.emit("addUser", user?.id);
         socket?.on("getUsers", (users) => {
@@ -41,11 +44,11 @@ const Dashboard = () => {
             }));
         });
     }, [socket]);
-
+    // * hàm useeffect: scroll
     useEffect(() => {
         messageRef?.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages?.messages]);
-
+    // * hàm useeffect: đăng nhập
     useEffect(() => {
         const loggedInUser = JSON.parse(localStorage.getItem("user:detail"));
         const fetchConversations = async () => {
@@ -64,7 +67,7 @@ const Dashboard = () => {
         };
         fetchConversations();
     }, []);
-
+    // * hàm useeffect: fetchUser
     useEffect(() => {
         const fetchUsers = async () => {
             const res = await fetch(
@@ -122,7 +125,11 @@ const Dashboard = () => {
 
     return (
         <div className="w-screen flex ">
-            <div className="w-[25%]  h-screen bg-secondary">
+            {/* TODO */}
+
+
+
+            <div className="w-[25%]  h-screen bg-secondary overflow-scroll">
                 <div className="flex items-center my-8 mx-14">
                     <div className="border border-primary p-[2px] rounded-full">
                         <img
@@ -183,6 +190,9 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+
+            {/* TODO  MESSAGE */}
             <div className="w-[50%] h-screen bg-white flex flex-col items-center">
                 {messages?.receiver?.fullName && (
                     <div className="w-[75%] bg-secondary h-[80px] my-14 rounded-full flex items-center px-14 py-2 shadow-lg">
@@ -229,34 +239,11 @@ const Dashboard = () => {
                 )}
                 <div className="h-[75%] border w-full overflow-scroll shadow-sm">
                     <div className=" p-14">
-                        {/* {messages?.messages?.length > 0 ? (
-                            messages.messages.map(
-                                ({ message, user: { id } = {} }) => {
-                                    return (
-                                        <>
-                                            <div
-                                                className={`max-w-[40%] rounded-b-xl p-4 mb-6 ${
-                                                    id === user?.id
-                                                        ? "bg-primary text-white rounded-tl-xl ml-auto"
-                                                        : "bg-secondary rounded-tr-xl"
-                                                } `}>
-                                                {message}
-                                            </div>
-                                            <div ref={messageRef}></div>
-                                        </>
-                                    );
-                                }
-                            )
-                        ) : (
-                            <div className="text-center text-lg font-semibold mt-24">
-                                Không có tin nhắn hoặc cuộc hội thoại nào được
-                                chọn!!
-                            </div>
-                        )} */}
                         {messages?.messages?.length > 0 ? (
                             messages.messages.map(
                                 ({ message, user: { id } = {} }) => {
                                     return (
+                                        <>
                                         <div
                                             className={`max-w-[40%] rounded-b-xl p-4 mb-6 ${
                                                 id === user?.id
@@ -265,6 +252,8 @@ const Dashboard = () => {
                                             } `}>
                                             {message}
                                         </div>
+                                        <div ref={messageRef}></div>
+                                        </>
                                     );
                                 }
                             )
@@ -338,6 +327,13 @@ const Dashboard = () => {
                     </div>
                 )}
             </div>
+
+
+
+
+
+            {/* TODO PROPLE*/}
+            
             <div className="w-[25%] h-screen bg-light px-8 py-16 overflow-scroll">
                 <div className="text-primary text-lg">People</div>
                 <div>
