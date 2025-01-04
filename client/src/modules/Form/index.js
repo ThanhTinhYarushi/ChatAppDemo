@@ -28,7 +28,7 @@ const Form = ({ isSignInPage = true }) => {
         );
 
         if (res.status === 400) {
-            alert("Invalid credentials");
+            alert("Thông tin không hợp lệ");
         } else {
             const resData = await res.json();
             if (resData.token) {

@@ -6,6 +6,7 @@ import Img5 from "../../assets/img5.jpg";
 // import Img6 from "../../assets/img6.jpg";
 import admin_avatar from "../../assets/TheLiems.png";
 import { io } from "socket.io-client";
+import LogoutButton from "../../components/Logout";
 
 const Dashboard = () => {
     // * khai báo
@@ -100,6 +101,92 @@ const Dashboard = () => {
         setMessages({ messages: resData, receiver, conversationId });
     };
 
+    // TODO: đăng xuất
+    // import LogoutButton from "../../components/Logout";
+    // TODO: UPDATE
+    //!{
+    // Hàm lấy tin nhắn từ conversationId
+    // const fetchMessagesFromConversation = async (conversationId, receiver) => {
+    //     const res = await fetch(
+    //         `http://localhost:8000/api/message/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`,
+    //         {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //         }
+    //     );
+    //     const resData = await res.json();
+    //     setMessages({ messages: resData, receiver, conversationId });
+    // };
+    // // Hàm kiểm tra và lấy tin nhắn từ cuộc trò chuyện giữa user1 và user2
+    // const fetchMessages = async (user1, user2) => {
+    //     // Kiểm tra xem có cuộc trò chuyện giữa user1 và user2 chưa
+    //     const existingConversation = await checkExistingConversation(
+    //         user1,
+    //         user2
+    //     );
+
+    //     let conversationId; // Khai báo conversationId ở đây
+
+    //     if (!existingConversation) {
+    //         // Nếu chưa có, tạo cuộc trò chuyện mới
+    //         const newConversation = await createNewConversation(user1, user2);
+    //         conversationId = newConversation.id; // Gán conversationId mới
+    //     } else {
+    //         // Nếu có rồi, dùng conversationId hiện tại
+    //         conversationId = existingConversation.id;
+    //     }
+
+    //     // Lấy tin nhắn từ conversationId
+    //     fetchMessagesFromConversation(conversationId, user2); // Sử dụng hàm fetchMessagesFromConversation
+    // };
+    // // Kiểm tra cuộc trò chuyện có tồn tại hay không
+    // const checkExistingConversation = async (user1, user2) => {
+    //     try {
+    //         const response = await fetch(`/api/conversations/check`, {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ user1Id: user1.id, user2Id: user2.id }),
+    //         });
+
+    //         const data = await response.json();
+    //         return data; // Trả về conversationId nếu có
+    //     } catch (error) {
+    //         console.error("Lỗi kiểm tra cuộc trò chuyện:", error);
+    //         return null; // Không có cuộc trò chuyện
+    //     }
+    // };
+    // // Tạo cuộc trò chuyện mới
+    // const createNewConversation = async (user1, user2) => {
+    //     try {
+    //         const response = await fetch('/api/conversations', {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({
+    //                 user1Id: user1.id,
+    //                 user2Id: user2.id
+    //             }),
+    //         });
+
+    //         // Kiểm tra nếu API trả về lỗi
+    //         if (!response.ok) {
+    //             throw new Error('Failed to create conversation');
+    //         }
+
+    //         const data = await response.json();
+    //         if (data && data.id) {
+    //             return data; // Trả về cuộc trò chuyện mới
+    //         } else {
+    //             throw new Error('No conversation id returned');
+    //         }
+    //     } catch (error) {
+    //         console.error('Lỗi khi tạo cuộc trò chuyện mới:', error);
+    //         return null; // Trả về null nếu có lỗi
+    //     }
+    // };
+    //! }
+
     // TODO: gửi tin nhắn
     const sendMessage = async (e) => {
         setMessage("");
@@ -123,11 +210,24 @@ const Dashboard = () => {
         });
     };
 
+    const logout = () => {
+        // Xóa thông tin người dùng khỏi localStorage
+        localStorage.removeItem("user");
+
+        // Nếu dùng sessionStorage
+        // sessionStorage.removeItem('user');
+
+        // Ngắt kết nối socket (nếu đang sử dụng socket.io)
+        socket?.emit("logout", { userId: user?.id });
+        socket?.disconnect();
+
+        // Định hướng lại trang đăng nhập
+        window.location.href = "/login";
+    };
+
     return (
         <div className="w-screen flex ">
             {/* TODO */}
-
-
 
             <div className="w-[25%]  h-screen bg-secondary overflow-scroll">
                 <div className="flex items-center my-8 mx-14">
@@ -146,6 +246,13 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <hr />
+
+                {/* TODO :Nút đăng xuất */}
+                <div className="mx-14 mt-10">
+                    <div className="mx-14 mt-10">
+                        <LogoutButton />
+                    </div>
+                </div>
                 <div className="mx-14 mt-10">
                     <div className="text-primary text-lg">Tin Nhắn</div>
                     {/* TODO: Conversation */}
@@ -190,7 +297,6 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
 
             {/* TODO  MESSAGE */}
             <div className="w-[50%] h-screen bg-white flex flex-col items-center">
@@ -244,15 +350,15 @@ const Dashboard = () => {
                                 ({ message, user: { id } = {} }) => {
                                     return (
                                         <>
-                                        <div
-                                            className={`max-w-[40%] rounded-b-xl p-4 mb-6 ${
-                                                id === user?.id
-                                                    ? "bg-primary text-white rounded-tl-xl ml-auto"
-                                                    : "bg-secondary rounded-tr-xl"
-                                            } `}>
-                                            {message}
-                                        </div>
-                                        <div ref={messageRef}></div>
+                                            <div
+                                                className={`max-w-[40%] rounded-b-xl p-4 mb-6 ${
+                                                    id === user?.id
+                                                        ? "bg-primary text-white rounded-tl-xl ml-auto"
+                                                        : "bg-secondary rounded-tr-xl"
+                                                } `}>
+                                                {message}
+                                            </div>
+                                            <div ref={messageRef}></div>
                                         </>
                                     );
                                 }
@@ -328,12 +434,8 @@ const Dashboard = () => {
                 )}
             </div>
 
-
-
-
-
             {/* TODO PROPLE*/}
-            
+
             <div className="w-[25%] h-screen bg-light px-8 py-16 overflow-scroll">
                 <div className="text-primary text-lg">People</div>
                 <div>
