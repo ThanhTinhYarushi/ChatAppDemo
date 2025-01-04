@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const io = require("socket.io")(8080, {
     cors: {
-        origin: "http://localhost:3002",
+        origin: "http://localhost:3000",
     },
 });
 
@@ -78,8 +78,10 @@ io.on("connection", (socket) => {
         users = users.filter((user) => user.socketId !== socket.id);
         io.emit("getUsers", users);
     });
-    // io.emit('getUsers', socket.userId);
+    // io.emit("getUsers", socket.userId);
 });
+
+// app.use(cors());
 
 // TODO: Routes
 app.get("/", (req, res) => {

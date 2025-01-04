@@ -11,19 +11,19 @@ const Dashboard = () => {
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("user:detail"))
     );
-    console.log("user :>>", user);
     const [conversations, setConversations] = useState([]);
-    console.log("conversations :>>", conversations);
     const [messages, setMessages] = useState({});
-    console.log("messages :>>", messages);
     const [message, setMessage] = useState("");
     const [users, setUsers] = useState([]);
-    console.log("users :>>", users);
     const [socket, setSocket] = useState(null);
     const messageRef = useRef(null);
+    console.log("user :>>", user);
+    console.log("conversations :>>", conversations);
+    console.log("messages :>>", messages);
+    console.log("users :>>", users);
 
     useEffect(() => {
-        setSocket(io("http://localhost:8000"));
+        setSocket(io("http://localhost:8080"));
     }, []);
 
     useEffect(() => {
